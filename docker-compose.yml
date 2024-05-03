@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "4000:3000"
+    depends_on:
+      - databaze
+    env_file: ./backend/.env
+  databaze:
+    image: postgres
+    container_name: postgres
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  pgdata:
