@@ -2,11 +2,15 @@ version: "3.9"
 services:
   backend:
     build: ./backend
+    container_name: backend
     ports:
       - "4000:3000"
     depends_on:
       - databaze
+    restart: on-failure
     env_file: ./backend/.env
+    networks:
+      - backend
   databaze:
     image: postgres
     container_name: postgres
@@ -15,5 +19,24 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    restart: on-failure
+    networks:
+      - internal-network
+      - backend
+  frontend:
+    build: ./frontend
+    ports:
+      - "8081:80"
+    restart: on-failure
+    networks:
+      - frontend
 volumes:
   pgdata:
+networks:
+  internal-network:
+    driver: bridge
+    internal: true
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
